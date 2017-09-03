@@ -16,6 +16,8 @@ public class Nrepl {
 
     private static final int PORT = 7888;
 
+    private static final String BIND = "0.0.0.0";
+
     private Object server;
 
     public Nrepl() {
@@ -24,9 +26,6 @@ public class Nrepl {
 
         RT.var("clojure.core", "require")
                 .invoke(Symbol.intern("clojure.tools.nrepl.server"));
-
-        RT.var("clojure.core", "require")
-                .invoke(Symbol.intern("osgi.helpers"));
     }
 
     public void start() {
@@ -34,6 +33,8 @@ public class Nrepl {
 
         args.add(Keyword.intern("port"));
         args.add(PORT);
+        args.add(Keyword.intern("bind"));
+        args.add(BIND);
 
         server = RT.var("clojure.tools.nrepl.server", "start-server")
                 .applyTo(RT.seq(args));
