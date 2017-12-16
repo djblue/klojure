@@ -7,7 +7,7 @@
            [java.util Collections]))
 
 (defn methods-of [x]
-  (->> (.. (class x) getMethods) (map #(.. % toGenericString))))
+  (->> (.getMethods (class x) ) (map #(.toGenericString %))))
 
 (def states {Bundle/ACTIVE      :active
              Bundle/INSTALLED   :installed
@@ -21,21 +21,21 @@
         (map vector
              (map (comp keyword str/lower-case)
                   (Collections/list (. dict keys)))
-             (Collections/list (. dict elements)))))
+             (Collections/list (.elements dict)))))
 
 (defn bundle->map [bundle]
-  {:id       (. bundle getBundleId)
-   :name     (. bundle getSymbolicName)
-   :version  (. bundle getVersion)
-   :headers  (-> bundle (.  getHeaders) dict->map)
-   :location (. bundle getLocation)
-   :state    (get states (. bundle getState) :unknown)
-   :modified (. bundle getLastModified)
-   :fragment (. bundle isFragment)})
+  {:id       (.getBundleId bundle)
+   :name     (.getSymbolicName bundle)
+   :version  (.getVersion bundle)
+   :headers  (-> (.getHeaders bundle) dict->map)
+   :location (.getLocation bundle)
+   :state    (get states (.getState bundle) :unknown)
+   :modified (.getLastModified bundle)
+   :fragment (.isFragment bundle)})
 
-(defn start! [bundle] (.. bundle start))
-(defn stop! [bundle] (.. bundle stop))
-(defn uninstall! [bundle] (.. bundle uninstall))
+(defn start! [bundle] (.start bundle))
+(defn stop! [bundle] (.stop bundle))
+(defn uninstall! [bundle] (.uninstall bundle))
 
 (defn bundle-cxt []
   (.. FrameworkUtil (getBundle Nrepl) getBundleContext))
@@ -58,10 +58,10 @@
   (-> "org.apache.karaf.features.FeaturesService" get-services first))
 
 (defn list-repositories []
-  (.. (get-features-service) listRepositories))
+  (.listRepositories (get-features-service)))
 
 (defn list-features []
-  (->> (list-repositories) (mapcat #(.. % getFeatures))))
+  (->> (list-repositories) (mapcat #(.getFeatures %))))
 
 (comment
   (->> (bundle-list)
@@ -69,9 +69,8 @@
        (filter #(-> % :state (= :resolved)))
        (print-table [:id :state :version :name]))
 
-  (->> (bundle-list) first methods-of pprint)
+  (->> (bundle-list) first methods-of)
 
   (->> (list-features)
        (filter #(.. % getName (contains "admin-ui")))
-       (map bean)
-       pprint))
+       (map bean)))

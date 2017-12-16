@@ -11,6 +11,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <ddf.version>2.12.0-SNAPSHOT</ddf.version>
     </properties>
 
     <dependencies>
@@ -34,7 +35,6 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.24</version>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
@@ -48,19 +48,28 @@
         <dependency>
             <groupId>ddf.security</groupId>
             <artifactId>ddf-security-common</artifactId>
-            <version>2.11.0-SNAPSHOT</version>
+            <version>${ddf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ddf.catalog.core</groupId>
+            <artifactId>catalog-core-api</artifactId>
+            <version>${ddf.version}</version>
         </dependency>
         <dependency>
             <groupId>ddf.platform.util</groupId>
             <artifactId>platform-util</artifactId>
-            <version>2.11.0-SNAPSHOT</version>
+            <version>${ddf.version}</version>
         </dependency>
         <dependency>
             <groupId>ddf.catalog.core</groupId>
             <artifactId>catalog-core-api-impl</artifactId>
-            <version>2.11.0-SNAPSHOT</version>
+            <version>${ddf.version}</version>
         </dependency>
-        -->
+        <dependency>
+            <groupId>ddf.catalog.core</groupId>
+            <artifactId>catalog-core-standardframework</artifactId>
+            <version>${ddf.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -97,7 +106,12 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>
-                            *;scope=compile|runtime;inline=false;artifactId=!rewrite-cljs|slf4j-api
+                            clojure,
+                            tools.nrepl,
+                            cljfmt,
+                            catalog-core-api-impl,
+                            platform-util
+                            ;scope=compile|runtime;inline=false;artifactId=!rewrite-cljs|slf4j-api
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <DynamicImport-Package>*</DynamicImport-Package>
