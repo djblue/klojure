@@ -113,8 +113,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- for AOT compile
-            -->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -127,13 +125,15 @@
                         <Embed-Dependency>
                             *
                             ;artifactId=!rewrite-cljs|drawbridge
-                            ;inline=false
+                            ;inline=true
                             ;scope=!provided
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
-                        <DynamicImport-Package>*</DynamicImport-Package>
+                            Exclude `ddf.catalog.CatalogFramework` which is transitively embedded.
+                            ProTip: Do not use ddf.catalog in a namespace because it will also be excluded.
                         -->
+                        <Private-Package>!ddf.catalog</Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

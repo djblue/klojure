@@ -1,4 +1,4 @@
-(ns ddf.catalog.core
+(ns catalog.core
   (:require [osgi.core :as osgi])
   (:import (org.apache.shiro.util ThreadContext)
            (ddf.catalog.data Metacard AttributeDescriptor MetacardType AttributeType$AttributeFormat)
@@ -18,7 +18,7 @@
           attr (.getAttribute metacard name)]
       (if (nil? attr)
         nil
-        [(keyword "ddf.catalog.core" name)
+        [(keyword "catalog.core" name)
          (if (.isMultiValued descriptor)
            (.getValues attr)
            (.getValue attr))]))))
