@@ -14,9 +14,9 @@ public class Nrepl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Nrepl.class);
 
-    private static final int PORT = 7888;
+    static final int PORT = 7888;
 
-    private static final String BIND = "0.0.0.0";
+    static final String BIND = "0.0.0.0";
 
     private Object server;
 

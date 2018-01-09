@@ -31,14 +31,19 @@ public class CljReplCommand implements Action {
         Thread.currentThread()
                 .setContextClassLoader(Nrepl.class.getClassLoader());
 
-        args.add(PersistentHashMap.create(RT.keyword(null,"port"), 0));
+        args.add(PersistentHashMap.create(
+                RT.keyword(null, "attach"),
+                String.format("%s:%d", Nrepl.BIND, Nrepl.PORT)));
         RT.var("clojure.core", "require")
                 .invoke(Symbol.intern("reply.main"));
-        RT.var("reply.main", "launch-nrepl")
-                .applyTo(RT.seq(args));
 
-        signals.set(null, signalsSave);
-        handlers.set(null, handlersSave);
+        try {
+            RT.var("reply.main", "launch-nrepl")
+                    .applyTo(RT.seq(args));
+        } finally {
+            signals.set(null, signalsSave);
+            handlers.set(null, handlersSave);
+        }
 
         return null;
     }
