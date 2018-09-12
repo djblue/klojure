@@ -1,6 +1,5 @@
 package org.codice.ddf.devtools;
 
-import clojure.lang.PersistentHashMap;
 import clojure.lang.RT;
 import clojure.lang.Symbol;
 import org.apache.karaf.shell.api.action.Action;
@@ -9,9 +8,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 import sun.misc.Signal;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 @Command(scope = "clj", name = "repl", description = "Start clojure repl")
 @Service
@@ -27,19 +24,15 @@ public class CljReplCommand implements Action {
         handlers.setAccessible(true);
         Hashtable handlersSave = (Hashtable) ((Hashtable) handlers.get(null)).clone();
 
-        List<Object> args = new ArrayList<>();
         Thread.currentThread()
                 .setContextClassLoader(Nrepl.class.getClassLoader());
 
-        args.add(PersistentHashMap.create(
-                RT.keyword(null, "attach"),
-                String.format("%s:%d", Nrepl.BIND, Nrepl.PORT)));
         RT.var("clojure.core", "require")
-                .invoke(Symbol.intern("reply.main"));
+                .invoke(Symbol.intern("rebel-readline.main"));
 
         try {
-            RT.var("reply.main", "launch-nrepl")
-                    .applyTo(RT.seq(args));
+            RT.var("rebel-readline.main", "-main")
+                    .invoke();
         } finally {
             signals.set(null, signalsSave);
             handlers.set(null, handlersSave);

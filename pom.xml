@@ -11,7 +11,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <ddf.version>2.12.0-SNAPSHOT</ddf.version>
+        <ddf.version>2.13.1</ddf.version>
         <karaf.version>4.1.2</karaf.version>
     </properties>
 
@@ -32,9 +32,9 @@
             <version>0.2.12</version>
         </dependency>
         <dependency>
-            <groupId>reply</groupId>
-            <artifactId>reply</artifactId>
-            <version>0.3.7</version>
+            <groupId>com.bhauman</groupId>
+            <artifactId>rebel-readline</artifactId>
+            <version>0.1.4</version>
         </dependency>
         <dependency>
             <groupId>cljfmt</groupId>
@@ -154,7 +154,7 @@
         <repository>
             <id>clojars.org</id>
             <name>Clojars Repository</name>
-            <url>http://clojars.org/repo</url>
+            <url>https://repo.clojars.org</url>
         </repository>
     </repositories>
 </project>
