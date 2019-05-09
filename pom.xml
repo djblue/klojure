@@ -121,18 +121,22 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.5.1</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Karaf-Commands>*</Karaf-Commands>
+                        <_noee>true</_noee>
                         <Embed-Dependency>
                             *
                             ;artifactId=!rewrite-cljs|drawbridge
                             ;inline=true
                             ;scope=!provided
                         </Embed-Dependency>
+                        <Import-Package>
+                            !javax.microedition.io,!javax.persistence,*
+                        </Import-Package>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
                             Exclude `ddf.catalog.CatalogFramework` which is transitively embedded.
