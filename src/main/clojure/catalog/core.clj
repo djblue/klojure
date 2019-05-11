@@ -2,6 +2,7 @@
   (:require [osgi.core :as osgi])
   (:import (org.apache.shiro.util ThreadContext)
            (ddf.catalog.data Metacard AttributeDescriptor MetacardType AttributeType$AttributeFormat)
+           (klojure KlojureMetacard)
            (ddf.catalog.operation QueryRequest Query)
            (org.codice.ddf.security.common Security)
            (ddf.catalog.operation.impl QueryRequestImpl QueryImpl CreateRequestImpl UpdateRequestImpl DeleteRequestImpl)
@@ -133,8 +134,7 @@
 
 (defn query-response->map [response]
   (->> (.getResults response)
-       (map #(.getMetacard %))
-       (map metacard->map)))
+       (map #(KlojureMetacard. (.getMetacard %)))))
 
 (defmulti query class)
 
@@ -172,7 +172,7 @@
 (defn delete! [& ids]
   (bind-admin)
   (.delete (get-catalog-framework)
-           (DeleteRequestImpl.  (into-array String ids))))
+           (DeleteRequestImpl. (into-array String ids))))
 
 (comment
 
