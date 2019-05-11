@@ -34,7 +34,6 @@
            (into {}))
       {:metacard-type metacard-type})))
 
-
 (def types {String    BasicTypes/STRING_TYPE
             Boolean   BasicTypes/BOOLEAN_TYPE
             Date      BasicTypes/DATE_TYPE
@@ -51,13 +50,13 @@
 (defn attribute-descriptor ^AttributeDescriptor [[k v]]
   (let [multi? (instance? List v)]
     (AttributeDescriptorImpl.
-      (name k)
-      false
-      true
-      false
-      multi?
-      (get types
-           (type ((if multi? first identity) v))))))
+     (name k)
+     false
+     true
+     false
+     multi?
+     (get types
+          (type ((if multi? first identity) v))))))
 
 (defn map->metacard ^Metacard [m]
   (let [^Set descriptors (set (map attribute-descriptor m))
@@ -69,7 +68,7 @@
 
 (defn bind-admin []
   (ThreadContext/bind
-    (. (Security/getInstance) (getSubject "admin" "admin"))))
+   (. (Security/getInstance) (getSubject "admin" "admin"))))
 
 (defn get-catalog-framework ^CatalogFramework []
   (first (osgi/get-services "ddf.catalog.CatalogFramework")))
@@ -107,27 +106,27 @@
 
          ; iterative
          (recur
-           (case op
-             :is (.is acc)
-             :like (.like acc)
-             (:less-than :<) (.lessThan acc)
-             (:less-than-or-equal-to :<=) (.lessThanOrEqualTo acc)
-             (:greater-than :>) (.greaterThan acc)
-             (:greater-than-or-equal-to :>=) (.greaterThanOrEqualTo acc)
-             :between (.between acc)
-             (:equal-to :=) (.equalTo acc)
-             (:not-equal-to :!=) (.notEqualTo acc)
-             :after (.after acc)
-             :before (.before acc)
-             :during (.during acc)
-             :overlapping (.overlapping acc)
-             :beyond (.beyond acc)
-             :within-buffer (.withinBuffer acc)
-             :intersecting (.intersecting acc)
-             :containing (.containing acc)
-             :within (.within acc)
-             :nearest-to (.nearestTo acc))
-           operands))))))
+          (case op
+            :is (.is acc)
+            :like (.like acc)
+            (:less-than :<) (.lessThan acc)
+            (:less-than-or-equal-to :<=) (.lessThanOrEqualTo acc)
+            (:greater-than :>) (.greaterThan acc)
+            (:greater-than-or-equal-to :>=) (.greaterThanOrEqualTo acc)
+            :between (.between acc)
+            (:equal-to :=) (.equalTo acc)
+            (:not-equal-to :!=) (.notEqualTo acc)
+            :after (.after acc)
+            :before (.before acc)
+            :during (.during acc)
+            :overlapping (.overlapping acc)
+            :beyond (.beyond acc)
+            :within-buffer (.withinBuffer acc)
+            :intersecting (.intersecting acc)
+            :containing (.containing acc)
+            :within (.within acc)
+            :nearest-to (.nearestTo acc))
+          operands))))))
 
 (defn get-source-ids []
   (.. (get-catalog-framework) (getSourceIds)))
@@ -141,8 +140,8 @@
 (defmethod query Filter [filter]
   (bind-admin)
   (query-response->map
-    (.query (get-catalog-framework)
-            (QueryRequestImpl. (QueryImpl. filter) false))))
+   (.query (get-catalog-framework)
+           (QueryRequestImpl. (QueryImpl. filter) false))))
 
 (defmethod query PersistentVector [v]
   (query (vector->filter v)))
@@ -156,8 +155,8 @@
 (defmethod create! Metacard [& metacards]
   (bind-admin)
   (create-response->map
-    (.create (get-catalog-framework)
-             (CreateRequestImpl. metacards))))
+   (.create (get-catalog-framework)
+            (CreateRequestImpl. metacards))))
 
 (defmethod create! PersistentArrayMap [& metacards]
   (->> metacards
@@ -175,6 +174,7 @@
            (DeleteRequestImpl. (into-array String ids))))
 
 (comment
+  (require 'clojure.rep)
 
   (query [[:attribute Metacard/ID] :is :like [:text "*"]])
 
