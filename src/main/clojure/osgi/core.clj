@@ -3,11 +3,12 @@
             [clojure.pprint :refer [pprint print-table]]
             [clojure.reflect :as r])
   (:import [org.osgi.framework FrameworkUtil Bundle]
+           [org.apache.felix.utils.manifest Clause Parser]
            [org.codice.ddf.devtools Nrepl]
            [java.util Collections]))
 
 (defn methods-of [x]
-  (->> (.getMethods (class x) ) (map #(.toGenericString %))))
+  (->> (.getMethods (class x)) (map #(.toGenericString %))))
 
 (def states {Bundle/ACTIVE      :active
              Bundle/INSTALLED   :installed
@@ -23,11 +24,36 @@
                   (Collections/list (. dict keys)))
              (Collections/list (.elements dict)))))
 
+(defn pair [p]
+  (let [k (keyword (.getName p)) v (.getValue p)]
+    [k
+     (case k
+       (:uses :bundle-classpath :embed-dependency)
+       (str/split v #",")
+       v)]))
+
+(defn clause->map [clause]
+  [(.getName clause)
+   (into {} (map pair (concat (.getDirectives clause)
+                              (.getAttributes clause))))])
+
+(defn parse-header [headers k]
+  (let [header (get headers k)]
+    (assoc headers k (into {} (map clause->map (Parser/parseHeader header))))))
+
+(defn parse-headers [headers]
+  (-> headers
+      (parse-header :export-package)
+      (parse-header :export-service)
+      (parse-header :import-package)
+      (parse-header :require-capability)
+      (parse-header :embedded-artifacts)))
+
 (defn bundle->map [bundle]
   {:id       (.getBundleId bundle)
    :name     (.getSymbolicName bundle)
    :version  (.getVersion bundle)
-   :headers  (-> (.getHeaders bundle) dict->map)
+   :headers  (-> (.getHeaders bundle) dict->map parse-headers)
    :location (.getLocation bundle)
    :state    (get states (.getState bundle) :unknown)
    :modified (.getLastModified bundle)
