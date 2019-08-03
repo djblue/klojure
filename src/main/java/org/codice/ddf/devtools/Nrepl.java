@@ -25,7 +25,7 @@ public class Nrepl {
                 .setContextClassLoader(getClass().getClassLoader());
 
         RT.var("clojure.core", "require")
-                .invoke(Symbol.intern("clojure.tools.nrepl.server"));
+                .invoke(Symbol.intern("nrepl.server"));
     }
 
     public void start() {
@@ -36,7 +36,7 @@ public class Nrepl {
         args.add(Keyword.intern("bind"));
         args.add(BIND);
 
-        server = RT.var("clojure.tools.nrepl.server", "start-server")
+        server = RT.var("nrepl.server", "start-server")
                 .applyTo(RT.seq(args));
 
         LOGGER.info("Started nrepl server on port {}", PORT);
@@ -47,7 +47,7 @@ public class Nrepl {
 
         args.add(server);
 
-        RT.var("clojure.tools.nrepl.server", "stop-server")
+        RT.var("nrepl.server", "stop-server")
                 .applyTo(RT.seq(args));
 
         LOGGER.info("Stopped nrepl server on port {}", PORT);
