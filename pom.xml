@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>djblue.github.io</groupId>
     <artifactId>klojure</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -18,7 +18,7 @@
         <connection>scm:git:git@github.com:djblue/klojure.git</connection>
         <developerConnection>scm:git:git@github.com:djblue/klojure.git</developerConnection>
         <url>https://github.com/djblue/klojure</url>
-        <tag>klojure-0.0.2</tag>
+        <tag>@{project.version}</tag>
     </scm>
 
     <dependencies>
