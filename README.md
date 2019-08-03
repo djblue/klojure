@@ -65,7 +65,7 @@ To build the klojure jar, do:
 
 To hot deploy a development version, do:
 
-    cp target/klojure-0.0.2-SNAPSHOT.jar $DDF_HOME/deploy
+    cp target/klojure-*.jar $DDF_HOME/deploy
 
 ## License
 
