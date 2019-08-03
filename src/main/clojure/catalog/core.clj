@@ -68,7 +68,7 @@
 
 (defn bind-admin []
   (ThreadContext/bind
-   (. (Security/getInstance) (getSubject "admin" "admin"))))
+   (.getGuestSubject (Security/getInstance) "guest")))
 
 (defn get-catalog-framework ^CatalogFramework []
   (first (osgi/get-services "ddf.catalog.CatalogFramework")))
