@@ -8,7 +8,7 @@ A blueprint bundle for deploying a
 
 To install the bundle in a running karaf instance, do:
 
-    bundle:install https://git.io/fjHT9
+    bundle:install https://git.io/fjHIs; start klojure
 
 **NOTE**: you will probably need to disable the DDF Security Manager as
 clojure brings along its own classloader which causes problems with
