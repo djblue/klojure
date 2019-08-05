@@ -11,7 +11,8 @@
            (ddf.catalog CatalogFramework)
            (org.opengis.filter Filter)
            (ddf.catalog.filter FilterBuilder)
-           (clojure.lang PersistentVector PersistentArrayMap)))
+           (clojure.lang PersistentVector PersistentArrayMap)
+           (java.security PrivilegedAction)))
 
 (defn metacard-attr [^Metacard metacard]
   (fn [^AttributeDescriptor descriptor]
@@ -65,10 +66,6 @@
     (doseq [[k v] m]
       (.setAttribute impl (name k) v))
     impl))
-
-(defn bind-admin []
-  (ThreadContext/bind
-   (.getGuestSubject (Security/getInstance) "guest")))
 
 (defn get-catalog-framework ^CatalogFramework []
   (first (osgi/get-services "ddf.catalog.CatalogFramework")))
@@ -137,11 +134,19 @@
 
 (defmulti query class)
 
+(defmacro as-admin [& body]
+  `(.runAsAdmin (Security/getInstance)
+     (reify PrivilegedAction
+       (run [this]
+         (ThreadContext/bind
+           (.getSystemSubject (Security/getInstance)))
+         ~@body))))
+
 (defmethod query Filter [filter]
-  (bind-admin)
-  (query-response->map
-   (.query (get-catalog-framework)
-           (QueryRequestImpl. (QueryImpl. filter) false))))
+  (as-admin
+    (query-response->map
+     (.query (get-catalog-framework)
+             (QueryRequestImpl. (QueryImpl. filter) false)))))
 
 (defmethod query PersistentVector [v]
   (query (vector->filter v)))
@@ -153,10 +158,10 @@
        (map metacard->map)))
 
 (defmethod create! Metacard [& metacards]
-  (bind-admin)
-  (create-response->map
-   (.create (get-catalog-framework)
-            (CreateRequestImpl. metacards))))
+  (as-admin
+    (create-response->map
+     (.create (get-catalog-framework)
+              (CreateRequestImpl. metacards)))))
 
 (defmethod create! PersistentArrayMap [& metacards]
   (->> metacards
@@ -164,17 +169,17 @@
        (apply create!)))
 
 (defn update! [^String id ^Metacard metacard]
-  (bind-admin)
-  (.update (get-catalog-framework)
-           (UpdateRequestImpl. id metacard)))
+  (as-admin
+    (.update (get-catalog-framework)
+             (UpdateRequestImpl. id metacard))))
 
 (defn delete! [& ids]
-  (bind-admin)
-  (.delete (get-catalog-framework)
-           (DeleteRequestImpl. (into-array String ids))))
+  (as-admin
+    (.delete (get-catalog-framework)
+             (DeleteRequestImpl. (into-array String ids)))))
 
 (comment
-  (require 'clojure.rep)
+  (require 'clojure.repl)
 
   (query [[:attribute Metacard/ID] :is :like [:text "*"]])
 
