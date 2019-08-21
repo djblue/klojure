@@ -49,7 +49,7 @@ Below is an example of the API:
 (c/delete! "afa5099ccfcb40c3b39bade0148fc342")
 
 ; delete all metacards
-(->> (c/query [[:attribute Metacard/ID] :is :like [:text "*"]])
+(->> (c/query [[:attribute "id"] :is :like [:text "*"]])
      (map ::id)
      (apply c/delete!))
 
