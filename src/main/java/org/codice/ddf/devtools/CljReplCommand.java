@@ -25,7 +25,7 @@ public class CljReplCommand implements Action {
         Hashtable handlersSave = (Hashtable) ((Hashtable) handlers.get(null)).clone();
 
         Thread.currentThread()
-                .setContextClassLoader(Nrepl.class.getClassLoader());
+                .setContextClassLoader(CljReplCommand.class.getClassLoader());
 
         RT.var("clojure.core", "require")
                 .invoke(Symbol.intern("rebel-readline.main"));

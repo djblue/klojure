@@ -9,7 +9,7 @@
             [clojure.reflect :as r])
   (:import [org.osgi.framework FrameworkUtil Bundle]
            [org.apache.felix.utils.manifest Clause Parser]
-           [org.codice.ddf.devtools Nrepl]
+           [clojure.lang RT]
            [java.util Collections]))
 
 (def bundle-states
@@ -24,7 +24,7 @@
 (defn- bundle-cxt
   "Returns the bundle context for the nREPL bundle."
   []
-  (.. FrameworkUtil (getBundle Nrepl) getBundleContext))
+  (.. FrameworkUtil (getBundle RT) getBundleContext))
 
 (defn- methods-of
   "Attempts to use Java's reflection facilities to get
