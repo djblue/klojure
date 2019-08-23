@@ -69,6 +69,10 @@ To hot deploy a development version, do:
 
     cp target/klojure-*.jar $DDF_HOME/deploy
 
+## Documentation
+
+ * [API Docs](http://djblue.github.io/klojure/)
+
 ## License
 
 Copyright (c) 2019 Chris Badahdah

@@ -5,6 +5,7 @@
     <artifactId>klojure</artifactId>
     <version>0.0.3-SNAPSHOT</version>
     <packaging>bundle</packaging>
+    <description>A blueprint bundle for deploying a nrepl server to a karaf container</description>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -52,6 +53,12 @@
             <groupId>dorothy</groupId>
             <artifactId>dorothy</artifactId>
             <version>0.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>codox</groupId>
+            <artifactId>codox</artifactId>
+            <version>0.10.7</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
