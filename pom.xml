@@ -129,10 +129,19 @@
                 <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <phase>compile</phase>
+                        <!-- Run before compile so the java code has access to klojure.Main class -->
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <!-- Only compile klojure.main namespace, package the rest as clojure source -->
+                        <configuration>
+                            <copyDeclaredNamespaceOnly>true</copyDeclaredNamespaceOnly>
+                            <namespaces>
+                                <namespace>klojure.main</namespace>
+                            </namespaces>
+                            <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -149,18 +158,20 @@
                         <Embed-Dependency>
                             *
                             ;artifactId=!rewrite-cljs|drawbridge
-                            ;inline=true
                             ;scope=!provided
                         </Embed-Dependency>
-                        <Import-Package>
-                            !javax.microedition.io,!javax.persistence,*
-                        </Import-Package>
+                        <!-- Resolve all imports at runtime -->
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                        <Export-Package>
+                            <!-- export package for clj:repl command -->
+                            org.codice.ddf.devtools
+                        </Export-Package>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
                             Exclude `ddf.catalog.CatalogFramework` which is transitively embedded.
                             ProTip: Do not use ddf.catalog in a namespace because it will also be excluded.
                         -->
-                        <Private-Package>!ddf.catalog</Private-Package>
+                        <Private-Package>!ddf.catalog,klojure</Private-Package>
                     </instructions>
                 </configuration>
             </plugin>
