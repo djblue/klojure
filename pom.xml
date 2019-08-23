@@ -129,6 +129,7 @@
                 <extensions>true</extensions>
                 <executions>
                     <execution>
+                        <id>compile</id>
                         <!-- Run before compile so the java code has access to klojure.Main class -->
                         <phase>process-resources</phase>
                         <goals>
@@ -142,6 +143,13 @@
                             </namespaces>
                             <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
