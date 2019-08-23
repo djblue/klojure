@@ -1,9 +1,9 @@
 (ns catalog.core
+  "Namespace for interacting with DDF's Catalog Framework."
   (:require [osgi.core :as osgi])
   (:import (org.apache.shiro.util ThreadContext)
-           (ddf.catalog.data Metacard AttributeDescriptor MetacardType AttributeType$AttributeFormat)
+           (ddf.catalog.data Metacard AttributeDescriptor)
            (klojure KlojureMetacard)
-           (ddf.catalog.operation QueryRequest Query)
            (org.codice.ddf.security.common Security)
            (ddf.catalog.operation.impl QueryRequestImpl QueryImpl CreateRequestImpl UpdateRequestImpl DeleteRequestImpl)
            (java.util Set Date List)
@@ -11,10 +11,10 @@
            (ddf.catalog CatalogFramework)
            (org.opengis.filter Filter)
            (ddf.catalog.filter FilterBuilder)
-           (clojure.lang PersistentVector PersistentArrayMap)
+           (clojure.lang PersistentArrayMap)
            (java.security PrivilegedAction)))
 
-(defn metacard-attr [^Metacard metacard]
+(defn- metacard-attr [^Metacard metacard]
   (fn [^AttributeDescriptor descriptor]
     (let [name (.getName descriptor)
           attr (.getAttribute metacard name)]
@@ -25,7 +25,7 @@
            (.getValues attr)
            (.getValue attr))]))))
 
-(defn metacard->map [^Metacard metacard]
+(defn- metacard->map [^Metacard metacard]
   (let [metacard-type (.getMetacardType metacard)]
     (with-meta
       (->> metacard-type
@@ -35,20 +35,21 @@
            (into {}))
       {:metacard-type metacard-type})))
 
-(def types {String    BasicTypes/STRING_TYPE
-            Boolean   BasicTypes/BOOLEAN_TYPE
-            Date      BasicTypes/DATE_TYPE
-            Short     BasicTypes/SHORT_TYPE
-            Integer   BasicTypes/INTEGER_TYPE
-            Long      BasicTypes/LONG_TYPE
-            Float     BasicTypes/FLOAT_TYPE
-            Double    BasicTypes/DOUBLE_TYPE
-            :geometry BasicTypes/GEO_TYPE
-            bytes     BasicTypes/BINARY_TYPE
-            :xml      BasicTypes/XML_TYPE
-            :object   BasicTypes/OBJECT_TYPE})
+(def ^:private types
+  {String    BasicTypes/STRING_TYPE
+   Boolean   BasicTypes/BOOLEAN_TYPE
+   Date      BasicTypes/DATE_TYPE
+   Short     BasicTypes/SHORT_TYPE
+   Integer   BasicTypes/INTEGER_TYPE
+   Long      BasicTypes/LONG_TYPE
+   Float     BasicTypes/FLOAT_TYPE
+   Double    BasicTypes/DOUBLE_TYPE
+   :geometry BasicTypes/GEO_TYPE
+   bytes     BasicTypes/BINARY_TYPE
+   :xml      BasicTypes/XML_TYPE
+   :object   BasicTypes/OBJECT_TYPE})
 
-(defn attribute-descriptor ^AttributeDescriptor [[k v]]
+(defn- attribute-descriptor ^AttributeDescriptor [[k v]]
   (let [multi? (instance? List v)]
     (AttributeDescriptorImpl.
      (name k)
@@ -59,7 +60,7 @@
      (get types
           (type ((if multi? first identity) v))))))
 
-(defn map->metacard ^Metacard [m]
+(defn- map->metacard ^Metacard [m]
   (let [^Set descriptors (set (map attribute-descriptor m))
         metacard-type (MetacardTypeImpl. "test" descriptors)
         impl (MetacardImpl. metacard-type)]
@@ -67,13 +68,13 @@
       (.setAttribute impl (name k) v))
     impl))
 
-(defn get-catalog-framework ^CatalogFramework []
+(defn- get-catalog-framework ^CatalogFramework []
   (first (osgi/get-services "ddf.catalog.CatalogFramework")))
 
-(defn get-filter-builder ^FilterBuilder []
+(defn- get-filter-builder ^FilterBuilder []
   (first (osgi/get-services "ddf.catalog.filter.FilterBuilder")))
 
-(defn vector->filter ^Filter
+(defn- vector->filter ^Filter
   ([v] (vector->filter (get-filter-builder) v))
   ([b v]
    (loop [acc b
@@ -128,13 +129,11 @@
 (defn get-source-ids []
   (.. (get-catalog-framework) (getSourceIds)))
 
-(defn query-response->map [response]
+(defn- query-response->map [response]
   (->> (.getResults response)
        (map #(KlojureMetacard. (.getMetacard %)))))
 
-(defmulti query class)
-
-(defmacro as-admin [& body]
+(defmacro ^:private as-admin [& body]
   `(.runAsAdmin (Security/getInstance)
      (reify PrivilegedAction
        (run [this]
@@ -142,18 +141,26 @@
            (.getSystemSubject (Security/getInstance)))
          ~@body))))
 
-(defmethod query Filter [filter]
+(defn query
+  "Query the catalog framework.
+
+  Example querying for all metacard:
+
+      (query [[:attribute Metacard/ID] :is :like [:text \"*\"]])
+
+  Example querying for all workspaces:
+
+      (query [[:attribute Metacard/TAGS] :is :like [:text \"workspace\"]])
+  "
+  [filter]
   (as-admin
     (query-response->map
-     (.query (get-catalog-framework)
-             (QueryRequestImpl. (QueryImpl. filter) false)))))
-
-(defmethod query PersistentVector [v]
-  (query (vector->filter v)))
+      (.query (get-catalog-framework)
+              (QueryRequestImpl. (QueryImpl. (vector->filter filter)) false)))))
 
 (defmulti create! (fn [a & _] (class a)))
 
-(defn create-response->map [response]
+(defn- create-response->map [response]
   (->> (.getCreatedMetacards response)
        (map metacard->map)))
 

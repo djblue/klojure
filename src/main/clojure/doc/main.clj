@@ -19,6 +19,8 @@
        :package (symbol groupId artifactId)
        :version version
        :description description
+       :namespaces [#"^(?!(doc|klojure)).*"]
+       :metadata {:doc/format :markdown}
        :source-uri (str "https://github.com/djblue/" artifactId "/blob/master/{filepath}#L{line}")})))
 
 (-main)
