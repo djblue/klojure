@@ -1,5 +1,7 @@
 # klojure
 
+[![Build Status](https://travis-ci.org/djblue/klojure.svg?branch=master)](https://travis-ci.org/djblue/klojure)
+
 A blueprint bundle for deploying a
 [nrepl](https://nrepl.org/nrepl/0.6.0/index.html) server to a
 [karaf](https://karaf.apache.org/) container.
