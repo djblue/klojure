@@ -7,6 +7,9 @@
             [dorothy.core :as dot]
             [dorothy.jvm :refer [save! show!]]))
 
+(defn- user-name []
+  (System/getProperty "user.name"))
+
 (def bundle-pars
   ["spatial-"
    "catalog-ui"
@@ -94,14 +97,14 @@
 (comment
   "List of DDF bundle names"
   (->> (osgi/bundles)
-       (filter (b/select-bundles-built-by "lambeaux"))
+       (filter (b/select-bundles-built-by (user-name)))
        (map :name)))
 
 (comment
   "List of DDF bundle names partitioned into name groups"
   (let [pars bundle-pars]
     (->> (osgi/bundles)
-         (filter (b/select-bundles-built-by "lambeaux"))
+         (filter (b/select-bundles-built-by (user-name)))
          (b/partition-bundles-by-name pars)
          (map (fn [coll] (map #(:name %) coll))))))
 
@@ -110,13 +113,13 @@
   (let [bundles (->> (osgi/bundles)
                      (filter
                        (b/select-on-all
-                         [(b/select-bundles-built-by "lambeaux")
+                         [(b/select-bundles-built-by (user-name))
                           (b/select-bundles-by-name "catalog-")])))]
     (view-after-save
       (dot/digraph
         (into
           [(dot/subgraph :edges (layer-create-edge
-                                  b/select-packages-ddf-only bundles))]
+                                  (b/select-packages-ddf-only) bundles))]
           (layer-bulkcreate-nodes bundles)))
       {:format :svg :layout :dot})))
 

@@ -5,6 +5,9 @@
             [clojure.string :as s]
             [clojure.java.io :as io]))
 
+(defn- user-home []
+  (System/getProperty "user.home"))
+
 (defn size-as-mb
   "Given a number representing bytes, returns the equivalent number
   of megabytes."
@@ -19,7 +22,7 @@
   (let [group (:g mvn-coord)
         artifact-id (:a mvn-coord)
         version (:v mvn-coord)
-        path (str "/Users/lambeaux/.m2/repository/"
+        path (str (user-home) "/.m2/repository/"
                   (s/replace group "." "/")
                   "/" artifact-id "/" version "/" artifact-id "-" version ".jar")
         file (io/file path)]

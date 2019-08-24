@@ -34,16 +34,13 @@
   (->> (.getMethods (class x))
        (map #(.toGenericString %))))
 
-(defn- dict->map
-  [dict]
-  (into {}
-        (map vector
-             (map (comp keyword str/lower-case)
-                  (Collections/list (. dict keys)))
-             (Collections/list (.elements dict)))))
+(defn- dict->map [dict]
+  (zipmap
+    (map (comp keyword str/lower-case)
+         (Collections/list (. dict keys)))
+    (Collections/list (.elements dict))))
 
-(defn- pair
-  [p]
+(defn- pair [p]
   (let [k (keyword (.getName p)) v (.getValue p)]
     [k
      (case k
