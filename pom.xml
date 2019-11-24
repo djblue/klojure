@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <groupId>djblue.github.io</groupId>
     <artifactId>klojure</artifactId>
     <version>0.0.3-SNAPSHOT</version>
-    <packaging>bundle</packaging>
-    <description>A blueprint bundle for deploying a nrepl server to a karaf container</description>
+
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <name>Klojure</name>
+    <description>Clojure tools for Karaf containers.</description>
+
+    <modules>
+        <module>klojure-catalog</module>
+        <module>klojure-repl</module>
+        <module>klojure-deps</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -23,186 +33,6 @@
         <tag>@{project.version}</tag>
     </scm>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.clojure</groupId>
-            <artifactId>clojure</artifactId>
-            <version>1.10.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.clojure</groupId>
-            <artifactId>test.check</artifactId>
-            <version>0.9.0</version>
-        </dependency>
-        <dependency>
-            <groupId>nrepl</groupId>
-            <artifactId>nrepl</artifactId>
-            <version>0.6.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.bhauman</groupId>
-            <artifactId>rebel-readline</artifactId>
-            <version>0.1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>cljfmt</groupId>
-            <artifactId>cljfmt</artifactId>
-            <version>0.5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>dorothy</groupId>
-            <artifactId>dorothy</artifactId>
-            <version>0.0.7</version>
-        </dependency>
-        <dependency>
-            <groupId>aysylu</groupId>
-            <artifactId>loom</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.clojure</groupId>
-            <artifactId>data.json</artifactId>
-            <version>0.2.7</version>
-        </dependency>
-        <dependency>
-            <groupId>codox</groupId>
-            <artifactId>codox</artifactId>
-            <version>0.10.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.utils</artifactId>
-            <version>1.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.24</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>6.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.karaf.shell</groupId>
-            <artifactId>org.apache.karaf.shell.core</artifactId>
-            <version>${karaf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-            <version>${apache.shiro.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.security</groupId>
-            <artifactId>ddf-security-common</artifactId>
-            <version>${ddf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.catalog.core</groupId>
-            <artifactId>catalog-core-api</artifactId>
-            <version>${ddf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.platform.util</groupId>
-            <artifactId>platform-util</artifactId>
-            <version>${ddf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ddf.catalog.core</groupId>
-            <artifactId>catalog-core-api-impl</artifactId>
-            <version>${ddf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ddf.catalog.core</groupId>
-            <artifactId>catalog-core-standardframework</artifactId>
-            <version>${ddf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>src/main/clojure</directory>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>com.theoryinpractise</groupId>
-                <artifactId>clojure-maven-plugin</artifactId>
-                <version>1.8.1</version>
-                <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <!-- Run before compile so the java code has access to klojure.Main class -->
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <!-- Only compile klojure.main namespace, package the rest as clojure source -->
-                        <configuration>
-                            <copyDeclaredNamespaceOnly>true</copyDeclaredNamespaceOnly>
-                            <namespaces>
-                                <namespace>klojure.main</namespace>
-                            </namespaces>
-                            <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>3.5.1</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Karaf-Commands>*</Karaf-Commands>
-                        <_noee>true</_noee>
-                        <Embed-Dependency>
-                            *
-                            ;artifactId=!rewrite-cljs|drawbridge
-                            ;scope=!provided
-                        </Embed-Dependency>
-                        <!-- Resolve all imports at runtime -->
-                        <DynamicImport-Package>*</DynamicImport-Package>
-                        <Export-Package>
-                            <!-- export package for clj:repl command -->
-                            org.codice.ddf.devtools
-                        </Export-Package>
-                        <Embed-Transitive>true</Embed-Transitive>
-                        <!--
-                            Exclude `ddf.catalog.CatalogFramework` which is transitively embedded.
-                            ProTip: Do not use ddf.catalog in a namespace because it will also be excluded.
-                        -->
-                        <Private-Package>!ddf.catalog,klojure</Private-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <repositories>
         <repository>
             <id>codice</id>
@@ -215,4 +45,14 @@
             <url>https://repo.clojars.org</url>
         </repository>
     </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>codox</groupId>
+            <artifactId>codox</artifactId>
+            <version>0.10.7</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
 </project>

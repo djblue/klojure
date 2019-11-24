@@ -1,0 +1,5 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+    <bean class="klojure.java.devtools.Main" init-method="start" destroy-method="stop">
+        <argument value="7888"/>
+    </bean>
+</blueprint>

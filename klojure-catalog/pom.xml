@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>klojure</artifactId>
+        <groupId>djblue.github.io</groupId>
+        <version>0.0.3-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>bundle</packaging>
+    <artifactId>klojure-catalog</artifactId>
+    <name>Klojure :: Catalog</name>
+    <description>Clojure wrapper around the Catalog Framework.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>djblue.github.io</groupId>
+            <artifactId>klojure-repl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--  Using the Clojure runtime (RT) in KlojureMetacard  -->
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure</artifactId>
+            <version>1.10.0</version>
+        </dependency>
+        <!--  Embedded everywhere, so we need to embed these ourself  -->
+        <dependency>
+            <groupId>ddf.platform.util</groupId>
+            <artifactId>platform-util</artifactId>
+            <version>${ddf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ddf.catalog.core</groupId>
+            <artifactId>catalog-core-api-impl</artifactId>
+            <version>${ddf.version}</version>
+        </dependency>
+        <!--  Provided by DDF already  -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.core</artifactId>
+            <version>${karaf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>${apache.shiro.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ddf.security</groupId>
+            <artifactId>ddf-security-common</artifactId>
+            <version>${ddf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ddf.catalog.core</groupId>
+            <artifactId>catalog-core-api</artifactId>
+            <version>${ddf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ddf.catalog.core</groupId>
+            <artifactId>catalog-core-standardframework</artifactId>
+            <version>${ddf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>3.5.1</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Karaf-Commands>*</Karaf-Commands>
+                        <!--  <_noee>true</_noee>  -->
+                        <Embed-Dependency>*;scope=!provided</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <!-- Resolve all imports at runtime -->
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
