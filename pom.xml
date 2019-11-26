@@ -55,6 +55,16 @@
             <version>0.0.7</version>
         </dependency>
         <dependency>
+            <groupId>aysylu</groupId>
+            <artifactId>loom</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>data.json</artifactId>
+            <version>0.2.7</version>
+        </dependency>
+        <dependency>
             <groupId>codox</groupId>
             <artifactId>codox</artifactId>
             <version>0.10.7</version>
