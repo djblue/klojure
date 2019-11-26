@@ -2,6 +2,7 @@
   "Namespace for composing and rendering data and visualizations."
   (:require [osgi.core :as osgi]
             [deps.common :as c]
+            [deps.maven :as m]
             [deps.bundles :as b]
             [clojure.java.shell :refer [sh]]
             [dorothy.core :as dot]
@@ -122,6 +123,25 @@
                                   (b/select-packages-ddf-only) bundles))]
           (layer-bulkcreate-nodes bundles)))
       {:format :svg :layout :dot})))
+
+(comment
+  "Sample graph of Maven dependencies."
+  (view-after-save
+    (let [edges
+          (->> m/my-output-dir
+               m/mvn-list-dep-files
+               (filter #(or (.contains % "/security-") (.contains % "/platform-security-")))
+               m/mvn-collect-edges
+               (filter #(not= (:name %) "test"))
+               m/mvn-edges-as-adjacency-list
+               distinct
+               (filter #(let [t (get % 1)]
+                          (or (.startsWith t "ddf")
+                              (.startsWith t "org.codice")
+                              (.startsWith t "com.connexta")))))]
+      (dot/digraph
+        [(dot/subgraph
+           :edges (into [{} (dot/edge-attrs {:color :black})] edges))]))))
 
 (comment
   "Basic graphviz data sample"
