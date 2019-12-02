@@ -1,2 +1,4 @@
 {:deps
- {dorothy {:mvn/version "0.0.7"}}}
+ {dorothy {:mvn/version "0.0.7"}}
+ {aysylu/loom {:mvn/version "1.0.2"}}
+ {org.clojure/data.json {:mvn/version "0.2.7"}}}

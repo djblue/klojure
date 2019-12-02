@@ -3,7 +3,8 @@
   project, including subprojects, and provides query and manipulation tooling."
   (:require [clojure.java.shell :as shell]
             [clojure.xml :as xml])
-  (:import (java.nio.file Paths Files)))
+  (:import (java.nio.file Paths Files)
+           (java.nio.file.attribute FileAttribute)))
 
 ;; ----------------------------------------------------------------------
 ;; # REPL Constants
@@ -11,10 +12,17 @@
 ;; As desired or necessary, change these to point to specific locations on
 ;; your machine.
 
-(defn- validate-exists [dir-str]
-  (do (-> dir-str (Paths/get []) (Files/createDirectories [])) dir-str))
-
 (def ddf-home (System/getProperty "ddf.home"))
+(defn- validate-exists [dir-str]
+  (if (nil? ddf-home)
+    dir-str
+    (do (-> dir-str
+            (Paths/get (make-array String 0))
+            (Files/createDirectories (make-array FileAttribute 0)))
+        dir-str)))
+
+;; Writes dep data to DDF_HOME/graphs/maven by default, so dirs should exist
+;; when the REPL is loaded
 (def my-output-dir (validate-exists (str ddf-home "/graphs/maven")))
 
 ;; May require changing to point at DDF source code
@@ -326,7 +334,11 @@
 (defn mvn-edges-as-adjacency-list
   "Transforms edge maps into an adjacency list (vector of vectors)."
   [edges]
-  (into [] (map #(vector (:source %) (:target %)) edges)))
+  ;; Return a distinct coll since the :name information is gone
+  (->> edges
+       (map #(vector (:source %) (:target %)))
+       distinct
+       vec))
 
 (comment
   (mvn-edges-as-adjacency-list
@@ -379,15 +391,13 @@
         (str ddf-home "/graphs/maven/platform-security-encryption-commands.xml")
         (str ddf-home "/graphs/maven/platform-security-encryption-crypter.xml")
         (str ddf-home "/graphs/maven/platform-security-encryption-impl.xml")]
-       mvn-collect-edges
-       distinct)
+       mvn-collect-edges)
 
   ;; Comprehensive edge map list for security
   (->> my-output-dir
        mvn-list-dep-files
        (filter #(or (.contains % "/security-") (.contains % "/platform-security-")))
-       mvn-collect-edges
-       distinct)
+       mvn-collect-edges)
 
   ;; Full compile/provided scope dependency graph for security
   (->> my-output-dir
@@ -395,13 +405,11 @@
        (filter #(or (.contains % "/security-") (.contains % "/platform-security-")))
        mvn-collect-edges
        (filter #(not= (:name %) "test"))
-       mvn-edges-as-adjacency-list
-       distinct)
+       mvn-edges-as-adjacency-list)
 
   ;; Full compile/provided scope dependency graph for all of DDF
   (->> my-output-dir
        mvn-list-dep-files
        mvn-collect-edges
        (filter #(not= (:name %) "test"))
-       mvn-edges-as-adjacency-list
-       distinct))
+       mvn-edges-as-adjacency-list))

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>#mynetwork {width: 90%; height: 1100px; border: 1px solid lightgray;}
+    </style>
+</head>
+
+<body>
+<!-- Area where the viz will be drawn -->
+<div id="mynetwork"></div>
+
+<!-- Require the JavaScript library -->
+<script type="text/javascript"
+        src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
+
+<!-- JSON list of nodes of the form { "id": 0, "label": "Myriel", "group": 1 } -->
+<script type="application/json" id="nodes">
+    "REPLACE_NODES"
+</script>
+
+<!-- JSON list of edges of the form { "from": 1, "to": 0 } -->
+<script type="application/json" id="edges">
+    "REPLACE_EDGES"
+</script>
+
+<!-- Embedded JavaScript to power the viz generation, references the above JSON data -->
+<script>
+function draw() {
+  // create some nodes
+  var nodes = JSON.parse(document.getElementById('nodes').innerHTML);
+
+  // create some edges
+  var edges = JSON.parse(document.getElementById('edges').innerHTML);
+
+  // create a network
+  var container = document.getElementById("mynetwork");
+  var data = {
+    nodes: nodes,
+    edges: edges
+  };
+  var options = {
+    edges: {
+      arrows: {
+        to: {
+          enabled: true,
+          scaleFactor: 1
+        }
+      }
+    },
+    nodes: {
+      shape: "dot",
+      size: 30
+    },
+    physics: {
+      forceAtlas2Based: {
+        gravitationalConstant: -26,
+        centralGravity: 0.005,
+        springLength: 230,
+        springConstant: 0.18
+      },
+      maxVelocity: 146,
+      solver: "forceAtlas2Based",
+      timestep: 0.35,
+      stabilization: { iterations: 150 }
+    }
+  };
+  var network = new vis.Network(container, data, options);
+}
+
+window.addEventListener("load", () => {
+  draw();
+});
+</script>
+
+</body>
+</html>
