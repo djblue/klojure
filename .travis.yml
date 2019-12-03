@@ -6,7 +6,6 @@ cache:
     - $HOME/.m2
 script:
   - mvn clean install
-  - mvn clojure:run -Dclojure.script=src/main/clojure/doc/main.clj
 branches:
   only:
   - master
@@ -14,7 +13,7 @@ deploy:
   provider: pages
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
-  local-dir: target/doc
+  local-dir: klojure-docs/target/doc
   target-branch: gh-pages
   on:
     branch: master
