@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>klojure</artifactId>
+        <groupId>djblue.github.io</groupId>
+        <version>0.0.3-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
+    <artifactId>klojure-repl</artifactId>
+    <name>Klojure :: REPL</name>
+    <description>An nrepl server for a Karaf container.</description>
+
+    <dependencies>
+        <!--  Using the Clojure runtime (RT) in CljReplCommand  -->
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure</artifactId>
+            <version>1.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>nrepl</groupId>
+            <artifactId>nrepl</artifactId>
+            <version>0.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bhauman</groupId>
+            <artifactId>rebel-readline</artifactId>
+            <version>0.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.24</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.core</artifactId>
+            <version>${karaf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/clojure</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.theoryinpractise</groupId>
+                <artifactId>clojure-maven-plugin</artifactId>
+                <version>1.8.1</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <!-- Run before compile so the java code has access
+                        to klojure.Main class -->
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <!-- Only compile klojure.repl.main namespace, package the
+                        rest as clojure source -->
+                        <configuration>
+                            <copyDeclaredNamespaceOnly>true</copyDeclaredNamespaceOnly>
+                            <namespaces>
+                                <namespace>klojure.repl.main</namespace>
+                            </namespaces>
+                            <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
