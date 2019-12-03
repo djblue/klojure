@@ -15,7 +15,6 @@
         <module>klojure-catalog</module>
         <module>klojure-repl</module>
         <module>klojure-deps</module>
-        <module>klojure-docs</module>
     </modules>
 
     <properties>

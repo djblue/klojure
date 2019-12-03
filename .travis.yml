@@ -9,11 +9,12 @@ script:
 branches:
   only:
   - master
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  local-dir: klojure-docs/target/doc
-  target-branch: gh-pages
-  on:
-    branch: master
+# TODO - Fix docs (https://github.com/djblue/klojure/issues/10)
+#deploy:
+#  provider: pages
+#  skip-cleanup: true
+#  github-token: $GITHUB_TOKEN
+#  local-dir: target/doc
+#  target-branch: gh-pages
+#  on:
+#    branch: master
