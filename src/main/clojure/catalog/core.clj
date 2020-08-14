@@ -202,4 +202,6 @@
 
   (delete! "afa5099ccfcb40c3b39bade0148fc342")
 
-  (query [[:attribute Metacard/TAGS] :is :like [:text "workspace"]]))
+  (query [[:attribute Metacard/TAGS] :is :like [:text "workspace"]])
+
+  (def m1 (first (query [[:attribute Metacard/ID] :is :like [:text "*"]]))))

@@ -5,16 +5,18 @@ import ddf.catalog.data.Attribute;
 import ddf.catalog.data.AttributeDescriptor;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.MetacardType;
+import ddf.catalog.data.impl.AttributeImpl;
 import ddf.catalog.data.impl.MetacardImpl;
-
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class KlojureMetacard extends MetacardImpl implements Map {
+public class KlojureMetacard extends MetacardImpl implements Map<Object, Object> {
 
   public KlojureMetacard() {
     super();
@@ -75,22 +77,34 @@ public class KlojureMetacard extends MetacardImpl implements Map {
 
   @Override
   public Object put(Object key, Object value) {
-    return null;
+    String keyName = (String) RT.var("clojure.core", "name")
+        .applyTo(RT.seq(Arrays.asList(key)));
+
+    Object previous = get(keyName);
+    if (value instanceof List) {
+      this.setAttribute(new AttributeImpl(keyName, (List<Serializable>) value));
+    } else {
+      this.setAttribute(new AttributeImpl(keyName, (Serializable) value));
+    }
+    return previous;
   }
 
   @Override
   public Object remove(Object key) {
-    return null;
+    return put(key , null);
   }
 
   @Override
   public void putAll(Map map) {
-
+    Map<Object, Object> realmap = map;
+    for (Entry<Object, Object> e : realmap.entrySet()) {
+      put(e.getKey(), e.getValue());
+    }
   }
 
   @Override
   public void clear() {
-
+    forEach((key, value) -> remove(key));
   }
 
   @Override
@@ -116,8 +130,8 @@ public class KlojureMetacard extends MetacardImpl implements Map {
   }
 
   @Override
-  public Set<Entry> entrySet() {
-    return (Set<Entry>) this.keySet().stream()
+  public Set<Entry<Object, Object>> entrySet() {
+    return (Set<Entry<Object, Object>>) this.keySet().stream()
         .map((key) -> new AbstractMap.SimpleEntry(key, this.get(key)))
         .collect(Collectors.toSet());
   }
