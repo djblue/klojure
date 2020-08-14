@@ -117,6 +117,11 @@
             <version>${ddf.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>djblue</groupId>
+            <artifactId>portal</artifactId>
+            <version>0.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -187,6 +192,7 @@
                             ProTip: Do not use ddf.catalog in a namespace because it will also be excluded.
                         -->
                         <Private-Package>!ddf.catalog,klojure</Private-Package>
+                        <Import-Package />
                     </instructions>
                 </configuration>
             </plugin>

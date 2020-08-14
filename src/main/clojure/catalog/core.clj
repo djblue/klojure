@@ -4,7 +4,7 @@
   (:import (org.apache.shiro.util ThreadContext)
            (ddf.catalog.data Metacard AttributeDescriptor)
            (klojure KlojureMetacard)
-           (org.codice.ddf.security.common Security)
+           (org.codice.ddf.security Security)
            (ddf.catalog.operation.impl QueryRequestImpl QueryImpl CreateRequestImpl UpdateRequestImpl DeleteRequestImpl)
            (java.util Set Date List)
            (ddf.catalog.data.impl MetacardTypeImpl MetacardImpl AttributeDescriptorImpl BasicTypes)
@@ -67,6 +67,9 @@
     (doseq [[k v] m]
       (.setAttribute impl (name k) v))
     impl))
+
+(defn- get-security-service ^Security []
+  (first (osgi/get-services "org.codice.ddf.security.Security")))
 
 (defn- get-catalog-framework ^CatalogFramework []
   (first (osgi/get-services "ddf.catalog.CatalogFramework")))
@@ -134,11 +137,11 @@
        (map #(KlojureMetacard. (.getMetacard %)))))
 
 (defmacro ^:private as-admin [& body]
-  `(.runAsAdmin (Security/getInstance)
+  `(.runAsAdmin (get-security-service)
      (reify PrivilegedAction
        (run [this]
          (ThreadContext/bind
-           (.getSystemSubject (Security/getInstance)))
+           (.getSystemSubject (get-security-service)))
          ~@body))))
 
 (defn query
