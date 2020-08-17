@@ -1,5 +1,6 @@
 package klojure;
 
+import clojure.lang.Counted;
 import clojure.lang.RT;
 import ddf.catalog.data.Attribute;
 import ddf.catalog.data.AttributeDescriptor;
@@ -16,7 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class KlojureMetacard extends MetacardImpl implements Map<Object, Object> {
+public class KlojureMetacard extends MetacardImpl implements Map<Object, Object>,
+    Counted {
 
   public KlojureMetacard() {
     super();
@@ -136,4 +138,8 @@ public class KlojureMetacard extends MetacardImpl implements Map<Object, Object>
         .collect(Collectors.toSet());
   }
 
+  @Override
+  public int count() {
+    return this.keySet().size();
+  }
 }

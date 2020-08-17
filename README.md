@@ -8,13 +8,20 @@ A blueprint bundle for deploying a
 
 ## Installing
 
-To install the bundle in a running karaf instance, do:
+To install the bundle in a running karaf instance, do one of the following:
 
     bundle:install https://git.io/fjHIs; start klojure
+    
+    
+After building locally:
 
-**NOTE**: you will probably need to disable the DDF Security Manager as
-clojure brings along its own classloader which causes problems with
-security.
+    bundle:install mvn:djblue.github.io/klojure/0.0.3-SNAPSHOT
+
+---
+
+⚠️**NOTE**: you will probably need to disable the DDF Security Manager as clojure brings along its own classloader which causes problems with security.
+
+---
 
 ## Running a REPL
 
@@ -58,6 +65,10 @@ Below is an example of the API:
 ; query for all workspaces
 (c/query [[:attribute "metacard-tags"] :is :like [:text "workspace"]])
 ```
+
+## Portal Support
+[Portal](https://github.com/djblue/portal) is now included to view data.
+
 
 ## Building
 
